@@ -24,12 +24,12 @@ public class Renderer {
         double smoothingRadius = 12;
 
         for (Particle p : simulation.particles) {
-            // draw smoothing radius as soft blue blur
+            // smoothing radius as soft blue blur
             gc.setFill(Color.CYAN.deriveColor(0, 1, 1, 0.1));
             gc.fillOval(p.x - smoothingRadius, p.y - smoothingRadius,
                     smoothingRadius * 2, smoothingRadius * 2);
 
-            // draw particle
+            // actual particle
             gc.setFill(Color.CYAN);
             gc.fillOval(p.x - particleRadius / 2, p.y - particleRadius / 2,
                     particleRadius, particleRadius);

@@ -15,20 +15,31 @@ public class Main extends Application {
     public void start(Stage stage) {
         Canvas canvas = new Canvas(width, height);
 
-        Simulation simulation = new Simulation(width, height, 1000); // 300 particles
+        Simulation simulation = new Simulation(width, height, 3000);
         Renderer renderer = new Renderer(canvas, simulation);
+
+        // mouse interaction
+        canvas.setOnMouseMoved(event -> {
+            simulation.mouseX = event.getX();
+            simulation.mouseY = event.getY();
+        });
+
+        canvas.setOnMouseExited(event -> {
+            simulation.mouseX = -1;
+            simulation.mouseY = -1;
+        });
 
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                simulation.update();   // physics
-                renderer.draw();       // draw
+                simulation.update();
+                renderer.draw();
             }
         }.start();
 
         StackPane root = new StackPane(canvas);
         stage.setScene(new Scene(root));
-        stage.setTitle("Fluid Simulation");
+        stage.setTitle("Natural River Simulation");
         stage.show();
     }
 
