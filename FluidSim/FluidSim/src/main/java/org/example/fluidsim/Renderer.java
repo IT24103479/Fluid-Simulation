@@ -16,15 +16,23 @@ public class Renderer {
     public void draw() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        //clear canvas
+        // clear canvas
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        gc.setFill(Color.CYAN);
-        for (Particle p : simulation.particles) {
-            gc.fillOval(p.x, p.y, 5, 5); // 5x5 pixel circles
+        double particleRadius = 5;
+        double smoothingRadius = 12;
 
+        for (Particle p : simulation.particles) {
+            // draw smoothing radius as soft blue blur
+            gc.setFill(Color.CYAN.deriveColor(0, 1, 1, 0.1));
+            gc.fillOval(p.x - smoothingRadius, p.y - smoothingRadius,
+                    smoothingRadius * 2, smoothingRadius * 2);
+
+            // draw particle
+            gc.setFill(Color.CYAN);
+            gc.fillOval(p.x - particleRadius / 2, p.y - particleRadius / 2,
+                    particleRadius, particleRadius);
         }
     }
-
 }

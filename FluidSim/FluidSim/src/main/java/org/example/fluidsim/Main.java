@@ -1,42 +1,36 @@
 package org.example.fluidsim;
 
 import javafx.application.Application;
-import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.animation.AnimationTimer;
 
 public class Main extends Application {
+    private final double width = 800;
+    private final double height = 600;
+
     @Override
     public void start(Stage stage) {
-        stage.setTitle("FluidSim");
+        Canvas canvas = new Canvas(width, height);
 
-        Canvas canvas = new Canvas(800, 600);
-        javafx.scene.Group root = new javafx.scene.Group(canvas);
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-
-        // Create simulation and renderer
-        Simulation simulation = new Simulation();
+        Simulation simulation = new Simulation(width, height, 1000); // 300 particles
         Renderer renderer = new Renderer(canvas, simulation);
 
-        // Animation loop
-        new javafx.animation.AnimationTimer() {
-            private long lastTime = 0;
-
+        new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (lastTime > 0) {
-                    double dt = (now - lastTime) / 1_000_000_000.0; // convert ns to seconds
-                    simulation.update(dt);
-                }
-                lastTime = now;
-
-                renderer.draw();
+                simulation.update();   // physics
+                renderer.draw();       // draw
             }
         }.start();
-    }
 
+        StackPane root = new StackPane(canvas);
+        stage.setScene(new Scene(root));
+        stage.setTitle("Fluid Simulation");
+        stage.show();
+    }
 
     public static void main(String[] args) {
         launch();
