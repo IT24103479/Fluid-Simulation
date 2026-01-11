@@ -1,13 +1,22 @@
 package org.example.fluidsim;
 
-public class Particle {
-    public double x, y;
-    public double vx, vy;
+/**
+ * Represent a single particle in the fluid simulation.
+ * Stores position and velocity
+ */
 
-    public Particle(double x, double y) {
-        this.x = x;
-        this.y = y;
-        this.vx = 0; // start horizontal velocity small for natural drift
-        this.vy = 0;
+public class Particle {
+    public double positionX;
+    public double positionY;
+
+
+    public double velocityX;
+    public double velocityY;
+
+    public Particle(double startX, double startY) {
+        this.positionX = startX;
+        this.positionY = startY;
+        this.velocityX = 0;
+        this.velocityY = 0;
     }
 }
