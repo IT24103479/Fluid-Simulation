@@ -1,45 +1,60 @@
 package org.example.fluidsim;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.StackPane;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.animation.AnimationTimer;
 
 public class Main extends Application {
-    private final double width = 800;
-    private final double height = 600;
+    private static final int N = 400;
+    private static final int CELL = 1;
+
+    private final Simulation fluid = new Simulation(N, N, 500); // 500 particles
+    private final Renderer renderer = new Renderer(fluid);
 
     @Override
     public void start(Stage stage) {
-        Canvas canvas = new Canvas(width, height);
+        Canvas canvas = new Canvas(N * CELL, N * CELL);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        Simulation simulation = new Simulation(width, height, 3000);
-        Renderer renderer = new Renderer(canvas, simulation);
+        Label label = new Label("Density:");
+        TextField densityField = new TextField("50");
+        densityField.setPrefWidth(80);
 
-        // mouse interaction
-        canvas.setOnMouseMoved(event -> {
-            simulation.mouseX = event.getX();
-            simulation.mouseY = event.getY();
-        });
+        HBox topBar = new HBox(10, label, densityField);
 
-        canvas.setOnMouseExited(event -> {
-            simulation.mouseX = -1;
-            simulation.mouseY = -1;
+        canvas.setOnMouseDragged(e -> {
+            int x = (int) (e.getX() / CELL);
+            int y = (int) (e.getY() / CELL);
+
+            double amount = 50;
+            try { amount = Double.parseDouble(densityField.getText()); }
+            catch (NumberFormatException ex) { }
+
+            fluid.addDensity(x, y, amount);
+            fluid.addVelocity(x, y, 5, 5);
         });
 
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                simulation.update();
-                renderer.draw();
+                fluid.step();
+                renderer.render(gc);
             }
         }.start();
 
-        StackPane root = new StackPane(canvas);
+        BorderPane root = new BorderPane();
+        root.setTop(topBar);
+        root.setCenter(canvas);
+
+        stage.setTitle("Fluid Simulation");
         stage.setScene(new Scene(root));
-        stage.setTitle("Natural River Simulation");
         stage.show();
     }
 

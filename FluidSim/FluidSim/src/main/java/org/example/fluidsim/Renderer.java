@@ -1,38 +1,24 @@
 package org.example.fluidsim;
 
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Renderer {
-    private final Canvas canvas;
     private final Simulation simulation;
 
-    public Renderer(Canvas canvas, Simulation simulation) {
-        this.canvas = canvas;
+    public Renderer(Simulation simulation) {
         this.simulation = simulation;
     }
 
-    public void draw() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        // clear canvas
+    public void render(GraphicsContext gc) {
+        // Clear background
         gc.setFill(Color.BLACK);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.fillRect(0, 0, simulation.getWidth(), simulation.getHeight());
 
-        double particleRadius = 5;
-        double smoothingRadius = 12;
-
-        for (Particle p : simulation.particles) {
-            // smoothing radius as soft blue blur
-            gc.setFill(Color.CYAN.deriveColor(0, 1, 1, 0.1));
-            gc.fillOval(p.positionX - smoothingRadius, p.positionY - smoothingRadius,
-                    smoothingRadius * 2, smoothingRadius * 2);
-
-            // actual particle
-            gc.setFill(Color.CYAN);
-            gc.fillOval(p.positionX - particleRadius / 2, p.positionY - particleRadius / 2,
-                    particleRadius, particleRadius);
+        // Draw particles
+        gc.setFill(Color.CYAN);
+        for (Particle p : simulation.getParticles()) {
+            gc.fillOval(p.getX(), p.getY(), 3, 3);
         }
     }
 }
